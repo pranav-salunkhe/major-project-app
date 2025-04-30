@@ -30,14 +30,37 @@ Simply type your question about patients, diagnoses, admissions, or other MIMIC-
 with st.sidebar:
     st.header("Configuration")
     
-    # OpenAI API Key
-    openai_api_key = st.text_input("OpenAI API Key", type="password")
+        # Get credentials from secrets or show placeholder fields for local development
+    if "OPENAI_API_KEY" in st.secrets:
+        openai_api_key = st.secrets["OPENAI_API_KEY"]
+        st.success("OpenAI API key loaded from secrets!")
+    else:
+        openai_api_key = st.text_input("OpenAI API Key", type="password")
+        st.warning("API key not found in secrets. Enter it manually or add to .streamlit/secrets.toml")
     
     # Neo4j credentials
     st.subheader("Neo4j Database Credentials")
-    neo4j_uri = st.text_input("Neo4j URI", placeholder="bolt://localhost:7687")
-    neo4j_user = st.text_input("Neo4j Username", placeholder="neo4j")
-    neo4j_password = st.text_input("Neo4j Password", type="password")
+    
+    # Get Neo4j credentials from secrets or show placeholder fields
+    if all(k in st.secrets for k in ["NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD"]):
+        neo4j_uri = st.secrets["NEO4J_URI"]
+        neo4j_user = st.secrets["NEO4J_USER"]
+        neo4j_password = st.secrets["NEO4J_PASSWORD"]
+        st.success("Neo4j credentials loaded from secrets!")
+    else:
+        neo4j_uri = st.text_input("Neo4j URI", placeholder="bolt://localhost:7687")
+        neo4j_user = st.text_input("Neo4j Username", placeholder="neo4j")
+        neo4j_password = st.text_input("Neo4j Password", type="password")
+        st.warning("Neo4j credentials not found in secrets. Enter manually or add to .streamlit/secrets.toml")
+    
+    # # OpenAI API Key
+    # openai_api_key = st.text_input("OpenAI API Key", type="password")
+    
+    # # Neo4j credentials
+    # st.subheader("Neo4j Database Credentials")
+    # neo4j_uri = st.text_input("Neo4j URI", placeholder="bolt://localhost:7687")
+    # neo4j_user = st.text_input("Neo4j Username", placeholder="neo4j")
+    # neo4j_password = st.text_input("Neo4j Password", type="password")
     
     # Query approach selection
     query_method = st.radio(
